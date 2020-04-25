@@ -1,8 +1,14 @@
-#include "kill.h"
+#include "Kill.h"
 
 void Kill::killingFunc() {
-  // std::cout << "Love you, sweetie" << std::endl;
+#ifdef __linux__
+  system("killall -9 teams");
+#elif _WIN32
   system("taskkill /IM Teams.exe /F");
+#else
+  system("killall teams");
+}
+#endif
 }
 
 void Kill::timer_start(std::function<void(void)> func, int pause) {
@@ -11,7 +17,7 @@ void Kill::timer_start(std::function<void(void)> func, int pause) {
              1000 * 60 * std::chrono::milliseconds(pause);
     std::this_thread::sleep_until(x);
     func();
-  }).join();
+  }).detach();
 }
 
 bool Kill::check(int time) { return (time >= 0 && time <= 5000); }
